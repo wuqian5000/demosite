@@ -94,6 +94,7 @@
             width: 100%;
             max-width: 100%;
             overflow: hidden; /* Prevent content overflow */
+            display: none; /* Hide by default */
         }
         .chart-wrapper {
             height: 400px;
@@ -730,7 +731,16 @@
                                     size: 11
                                 }
                             }
+                        },
+                        // Ensure negative values are visible if any
+                        // Uncomment the following lines if negative values need to be displayed
+                        /*
+                        y: {
+                            beginAtZero: true,
+                            min: 'auto',
+                            max: 'auto'
                         }
+                        */
                     },
                     layout: {
                         padding: {
@@ -969,6 +979,31 @@
         // Initialize the dashboard
         initializeMainChart();
         updateStudentList();
+
+        // Set initial chart visibility based on selected chart type
+        (function() {
+            const chartType = document.getElementById('chartType').value;
+            const mainChartArea = document.querySelector('.main-chart-area');
+            const detailChartArea = document.querySelector('.detail-chart-area');
+            const lineChartArea = document.querySelector('.line-chart-area');
+            const sidePanel = document.querySelector('.side-panel');
+            const dashboardGrid = document.querySelector('.dashboard-grid');
+
+            if (chartType === 'line') {
+                mainChartArea.style.display = 'none';
+                detailChartArea.style.display = 'none';
+                lineChartArea.style.display = 'block';
+                sidePanel.style.display = 'none';
+                dashboardGrid.classList.add('line-chart-mode');
+                createLineChart(currentView);
+            } else {
+                mainChartArea.style.display = 'block';
+                detailChartArea.style.display = 'none';
+                lineChartArea.style.display = 'none';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+            }
+        })();
     </script>
 </body>
 </html>
