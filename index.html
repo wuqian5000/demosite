@@ -433,10 +433,10 @@
         <div class="filter-group">
             <label class="filter-label">Chart Type</label>
             <select id="chartType">
-                <option value="pie">Pie</option>
+                <option value="pie" selected>Pie</option>
                 <option value="line">Line</option>
                 <option value="bar">Bar</option>
-                <option value="heatmap" selected>Heatmap</option>
+                <option value="heatmap">Heatmap</option>
             </select>
         </div>
         <div class="filter-group">
@@ -1665,8 +1665,47 @@
         initializeMainChart();
         updateStudentList();
 
-        // Trigger the chart type change event to initialize the correct chart
-        chartTypeSelect.dispatchEvent(new Event('change'));
+        // Set initial chart visibility based on selected chart type
+        (function () {
+            const chartType = chartTypeSelect.value; // This will now be 'pie' by default
+            const mainChartArea = document.querySelector('.main-chart-area');
+            const detailChartArea = document.querySelector('.detail-chart-area');
+            const lineChartArea = document.querySelector('.line-chart-area');
+            const barChartArea = document.querySelector('.bar-chart-area');
+            const heatmapChartArea = document.querySelector('.heatmap-chart-area');
+            const sidePanel = document.querySelector('.side-panel');
+            const dashboardGrid = document.querySelector('.dashboard-grid');
+
+            // Hide all chart areas first
+            mainChartArea.style.display = 'none';
+            detailChartArea.style.display = 'none';
+            lineChartArea.style.display = 'none';
+            barChartArea.style.display = 'none';
+            heatmapChartArea.style.display = 'none';
+
+            if (chartType === 'line') {
+                lineChartArea.style.display = 'block';
+                sidePanel.style.display = 'none';
+                dashboardGrid.classList.add('line-chart-mode');
+                createLineChart(currentView);
+            } else if (chartType === 'bar') {
+                barChartArea.style.display = 'block';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+                initializeBarChart();
+            } else if (chartType === 'heatmap') {
+                heatmapChartArea.style.display = 'block';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+                createHeatmapChart();
+                updateStudentList();
+            } else {
+                mainChartArea.style.display = 'block';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+            }
+        })();
+
     </script>
 </body>
 
