@@ -2,7 +2,13 @@
 <html>
 <head>
     <title>Mental Health Dashboard</title>
+    <!-- Script includes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <!-- Additional script includes if necessary -->
+    <!-- Note: If React and Recharts are not used, you can remove these scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.0/Recharts.js"></script>
     <style>
         /* Base styles */
         body {
@@ -79,22 +85,15 @@
             max-width: 100%;
             overflow-x: hidden; /* Prevent horizontal overflow */
         }
-        .main-chart-area {
+        .main-chart-area, .detail-chart-area, .line-chart-area, .bar-chart-area {
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: block;
+            display: none;
         }
-        .detail-chart-area, .line-chart-area {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden; /* Prevent content overflow */
-            display: none; /* Hide by default */
+        .main-chart-area {
+            display: block; /* Show by default */
         }
         .chart-wrapper {
             height: 400px;
@@ -173,6 +172,10 @@
             width: 12px;
             height: 12px;
             border-radius: 2px;
+        }
+        .legend-item.hidden .legend-color {
+            border-bottom: 2px dashed #333;
+            background: transparent;
         }
 
         /* Data table */
@@ -260,6 +263,12 @@
             border-bottom: 1px solid #eee;
         }
 
+        /* Highlighted student row */
+        .student-row.highlighted {
+            background-color: #ffe4b2;
+            transition: background-color 0.3s;
+        }
+
         /* Back button */
         .back-button {
             display: none;
@@ -280,6 +289,52 @@
         canvas {
             max-width: 100%;
             display: block;
+        }
+
+        /* Additional styles for the bar chart view */
+        .chart-toggle-group {
+            display: flex;
+            gap: 0;
+            margin-bottom: 15px;
+        }
+        .chart-toggle-button {
+            padding: 8px 16px;
+            border: 1px solid #9333ea;
+            background: white;
+            color: #9333ea;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+        .chart-toggle-button:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        .chart-toggle-button:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        .chart-toggle-button.active {
+            background: #9333ea;
+            color: white;
+        }
+        .bar-chart-area {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .bar-chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        .bar-chart-legend .legend-item {
+            cursor: pointer;
+        }
+        .legend-item.hidden {
+            opacity: 0.5;
         }
     </style>
 </head>
@@ -307,6 +362,7 @@
             <select id="chartType">
                 <option value="pie">Pie</option>
                 <option value="line">Line</option>
+                <option value="bar">Bar</option>
             </select>
         </div>
         <div class="filter-group">
@@ -362,6 +418,20 @@
                     </table>
                 </div>
             </div>
+
+            <!-- New Bar Chart Area -->
+            <div class="bar-chart-area">
+                <div class="chart-toggle-group">
+                    <button class="chart-toggle-button active" data-view="standard">Standard</button>
+                    <button class="chart-toggle-button" data-view="negative">With Negatives</button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="bar-chart-legend" id="barChartLegend">
+                    <!-- Legend items will be added here -->
+                </div>
+            </div>
         </div>
         
         <div class="side-panel">
@@ -384,6 +454,7 @@
             </table>
         </div>
     </div>
+
     <script>
         // Basic emotion data structure (for pie charts)
         const data = {
@@ -484,12 +555,47 @@
             }
         };
 
+        // Bar chart student data
+        const barChartStudentData = {
+            '10/1/24': {
+                excited: ['Emma Wilson'],
+                happy: ['William Davis'],
+                angry: ['Benjamin Clark'],
+                sad: ['Lucas Miller']
+            },
+            '10/3/24': {
+                hopeful: ['Ava Martinez'],
+                calm: ['Mia Anderson'],
+                indifferent: ['Alexander Wright'],
+                pensive: ['Evelyn Moore']
+            },
+            '10/5/24': {
+                annoyed: ['Victoria Adams']
+            }
+        };
+
         // Chart instances
         let mainChart = null;
         let detailChart = null;
         let lineChart = null;
+        let barChart = null;
         let currentCategory = null;
         let currentView = 'all';
+        let showNegatives = false;
+        let hiddenEmotions = new Set();
+
+        // Emotion colors
+        const emotionColors = {
+            excited: '#9333ea',
+            happy: '#90EE90',
+            hopeful: '#9333ea',
+            calm: '#90EE90',
+            angry: '#CD5C5C',
+            sad: '#4169E1',
+            indifferent: '#CD5C5C',
+            pensive: '#4169E1',
+            annoyed: '#CD5C5C'
+        };
 
         // Initialize main pie chart
         function initializeMainChart() {
@@ -732,15 +838,6 @@
                                 }
                             }
                         },
-                        // Ensure negative values are visible if any
-                        // Uncomment the following lines if negative values need to be displayed
-                        /*
-                        y: {
-                            beginAtZero: true,
-                            min: 'auto',
-                            max: 'auto'
-                        }
-                        */
                     },
                     layout: {
                         padding: {
@@ -816,10 +913,38 @@
             const studentCount = document.getElementById('studentCount');
             let students = [];
 
-            if (category && emotion) {
+            const chartType = document.getElementById('chartType').value;
+
+            if (chartType === 'bar' && barChart) {
+                // Handle bar chart student list filtering
+                const visibleEmotions = new Set();
+                barChart.data.datasets.forEach(dataset => {
+                    if (!dataset.hidden) {
+                        visibleEmotions.add(dataset.label.toLowerCase());
+                    }
+                });
+
+                students = [];
+
+                barChartData.forEach(entry => {
+                    const date = entry.date;
+                    Object.keys(entry).forEach(emotion => {
+                        if (emotion !== 'date' && visibleEmotions.has(emotion)) {
+                            const names = barChartStudentData[date] && barChartStudentData[date][emotion] ? barChartStudentData[date][emotion] : [];
+                            students.push(...names.map(name => ({
+                                name,
+                                emotion: emotion,
+                                category: getEmotionCategory(emotion),
+                                date: date
+                            })));
+                        }
+                    });
+                });
+                filterInfo.textContent = 'Showing students based on visible emotions in bar chart';
+            } else if (category && emotion) {
                 students = (studentData[category][emotion.toLowerCase()] || []).map(name => ({
                     name,
-                    emotion: emotion,
+                    emotion: emotion.toLowerCase(),
                     category: category
                 }));
                 filterInfo.textContent = `Showing students feeling ${emotion}`;
@@ -848,11 +973,11 @@
             studentCount.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
 
             tableBody.innerHTML = students.map(student => `
-                <tr>
+                <tr class="student-row" data-name="${student.name}" data-emotion="${student.emotion}" data-date="${student.date || ''}">
                     <td>${student.name}</td>
                     <td>
                         <span class="emotion-tag ${student.category}">
-                            ${student.emotion}
+                            ${capitalizeFirstLetter(student.emotion)}
                         </span>
                     </td>
                     <td style="text-align: center;">
@@ -889,51 +1014,240 @@
             return "#"+RR+GG+BB;
         }
 
+        function getEmotionCategory(emotion) {
+            for (let [category, emotions] of Object.entries(studentData)) {
+                if (emotions[emotion]) {
+                    return category;
+                }
+            }
+            return 'unknown';
+        }
+
+        // Highlighting functions for bar chart hover
+        function highlightStudentsOnHover(emotion, date) {
+            const studentRows = document.querySelectorAll('.student-row');
+            studentRows.forEach(row => {
+                const rowEmotion = row.getAttribute('data-emotion');
+                const rowDate = row.getAttribute('data-date');
+                if (rowEmotion === emotion && rowDate === date) {
+                    row.classList.add('highlighted');
+                } else {
+                    row.classList.remove('highlighted');
+                }
+            });
+        }
+
+        function resetStudentHighlighting() {
+            const studentRows = document.querySelectorAll('.student-row');
+            studentRows.forEach(row => {
+                row.classList.remove('highlighted');
+            });
+        }
+
         // Event Handlers
-        // Update the chart type change handler
-        document.getElementById('chartType').addEventListener('change', (e) => {
+        // Modified chart type change handler
+        const chartTypeSelect = document.getElementById('chartType');
+        chartTypeSelect.addEventListener('change', (e) => {
             const chartType = e.target.value;
             const mainChartArea = document.querySelector('.main-chart-area');
             const detailChartArea = document.querySelector('.detail-chart-area');
             const lineChartArea = document.querySelector('.line-chart-area');
+            const barChartArea = document.querySelector('.bar-chart-area');
             const sidePanel = document.querySelector('.side-panel');
             const dashboardGrid = document.querySelector('.dashboard-grid');
 
+            // Hide all chart areas first
+            mainChartArea.style.display = 'none';
+            detailChartArea.style.display = 'none';
+            lineChartArea.style.display = 'none';
+            barChartArea.style.display = 'none';
+            
             if (chartType === 'line') {
-                mainChartArea.style.display = 'none';
-                detailChartArea.style.display = 'none';
                 lineChartArea.style.display = 'block';
                 sidePanel.style.display = 'none';
                 dashboardGrid.classList.add('line-chart-mode');
                 createLineChart(currentView);
+            } else if (chartType === 'bar') {
+                barChartArea.style.display = 'block';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+                initializeBarChart();
             } else {
                 mainChartArea.style.display = 'block';
-                detailChartArea.style.display = 'none';
-                lineChartArea.style.display = 'none';
                 sidePanel.style.display = 'block';
                 dashboardGrid.classList.remove('line-chart-mode');
                 
                 if (mainChart) {
-                    mainChart.config.type = chartType;
                     mainChart.update();
-                }
-                if (detailChart) {
-                    detailChart.config.type = chartType;
-                    detailChart.update();
                 }
             }
         });
 
-        // Line chart view toggle handlers
-        document.querySelectorAll('.toggle-button').forEach(button => {
+        // Bar Chart Implementation
+        const barChartData = [
+            {
+                date: '10/1/24',
+                excited: 1.25,
+                happy: 0.25,
+                angry: -1.25,
+                sad: -0.83
+            },
+            {
+                date: '10/3/24',
+                hopeful: 1.0,
+                calm: 0.75,
+                indifferent: -0.5,
+                pensive: -0.4
+            },
+            {
+                date: '10/5/24',
+                annoyed: -1.0
+            }
+        ];
+
+        function initializeBarChart() {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            
+            if (barChart) {
+                barChart.destroy();
+            }
+
+            const processedData = processBarChartData(barChartData);
+
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: processedData.labels,
+                    datasets: processedData.datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e0e0e0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return 'Date: ' + tooltipItems[0].label;
+                                },
+                                label: function(tooltipItem) {
+                                    return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    onHover: function(event, chartElements) {
+                        if (chartElements.length > 0) {
+                            const element = chartElements[0];
+                            const datasetIndex = element.datasetIndex;
+                            const index = element.index;
+                            const dataset = this.data.datasets[datasetIndex];
+                            const label = this.data.labels[index]; // date
+                            const emotion = dataset.label.toLowerCase();
+                            highlightStudentsOnHover(emotion, label);
+                        } else {
+                            resetStudentHighlighting();
+                        }
+                    }
+                }
+            });
+
+            updateBarChartLegend(processedData.datasets);
+            updateStudentList(); // Update student list based on initial bar chart
+        }
+
+        function processBarChartData(data) {
+            const labels = data.map(item => item.date);
+            const datasets = [];
+            
+            // Get all unique emotions
+            const emotions = new Set();
+            data.forEach(item => {
+                Object.keys(item).forEach(key => {
+                    if (key !== 'date') emotions.add(key);
+                });
+            });
+
+            // Create datasets
+            emotions.forEach(emotion => {
+                const dataset = {
+                    label: capitalizeFirstLetter(emotion),
+                    data: data.map(item => {
+                        const value = item[emotion] || 0;
+                        return showNegatives ? value : Math.abs(value);
+                    }),
+                    backgroundColor: emotionColors[emotion],
+                    borderColor: emotionColors[emotion],
+                    borderWidth: 1,
+                    hidden: hiddenEmotions.has(emotion)
+                };
+                datasets.push(dataset);
+            });
+
+            return { labels, datasets };
+        }
+
+        function updateBarChartLegend(datasets) {
+            const legendContainer = document.getElementById('barChartLegend');
+            legendContainer.innerHTML = '';
+
+            datasets.forEach((dataset, index) => {
+                const legendItem = document.createElement('div');
+                legendItem.classList.add('legend-item');
+                if (dataset.hidden) {
+                    legendItem.classList.add('hidden');
+                }
+                legendItem.dataset.emotion = dataset.label.toLowerCase();
+
+                legendItem.innerHTML = `
+                    <div class="legend-color" style="background: ${dataset.backgroundColor}"></div>
+                    ${dataset.label}
+                `;
+
+                legendItem.addEventListener('click', () => {
+                    const emotion = legendItem.dataset.emotion;
+                    dataset.hidden = !dataset.hidden;
+                    if (dataset.hidden) {
+                        hiddenEmotions.add(emotion);
+                        legendItem.classList.add('hidden');
+                    } else {
+                        hiddenEmotions.delete(emotion);
+                        legendItem.classList.remove('hidden');
+                    }
+                    barChart.update();
+                    updateStudentList();
+                });
+
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        // Bar chart toggle handlers
+        document.querySelectorAll('.chart-toggle-button').forEach(button => {
             button.addEventListener('click', (e) => {
                 const view = e.target.dataset.view;
-                document.querySelectorAll('.toggle-button').forEach(btn => 
+                document.querySelectorAll('.chart-toggle-button').forEach(btn => 
                     btn.classList.remove('active')
                 );
                 e.target.classList.add('active');
-                currentView = view;
-                createLineChart(view);
+                showNegatives = view === 'negative';
+                initializeBarChart();
             });
         });
 
@@ -946,60 +1260,38 @@
             updateStudentList(); // Reset to show all students
         });
 
-        // Date change handlers
-        document.getElementById('startDate').addEventListener('change', () => {
-            if (document.getElementById('chartType').value === 'line') {
-                createLineChart(currentView);
-            }
-            updateStudentList();
-        });
-
-        document.getElementById('endDate').addEventListener('change', () => {
-            if (document.getElementById('chartType').value === 'line') {
-                createLineChart(currentView);
-            }
-            updateStudentList();
-        });
-
-        // Alert checkbox handler
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('alert-checkbox')) {
-                console.log(`Alert ${e.target.checked ? 'set' : 'cleared'} for ${e.target.dataset.student} (${e.target.dataset.emotion})`);
-                // Here you could add code to persist the alert status
-            }
-        });
-
-        // Handle window clicks to hide tooltip
-        window.addEventListener('click', function(e) {
-            if (!e.target.closest('.chart-wrapper')) {
-                document.getElementById('dataPointInfo').style.display = 'none';
-            }
-        });
-
         // Initialize the dashboard
         initializeMainChart();
         updateStudentList();
 
         // Set initial chart visibility based on selected chart type
         (function() {
-            const chartType = document.getElementById('chartType').value;
+            const chartType = chartTypeSelect.value;
             const mainChartArea = document.querySelector('.main-chart-area');
             const detailChartArea = document.querySelector('.detail-chart-area');
             const lineChartArea = document.querySelector('.line-chart-area');
+            const barChartArea = document.querySelector('.bar-chart-area');
             const sidePanel = document.querySelector('.side-panel');
             const dashboardGrid = document.querySelector('.dashboard-grid');
 
+            // Hide all chart areas first
+            mainChartArea.style.display = 'none';
+            detailChartArea.style.display = 'none';
+            lineChartArea.style.display = 'none';
+            barChartArea.style.display = 'none';
+            
             if (chartType === 'line') {
-                mainChartArea.style.display = 'none';
-                detailChartArea.style.display = 'none';
                 lineChartArea.style.display = 'block';
                 sidePanel.style.display = 'none';
                 dashboardGrid.classList.add('line-chart-mode');
                 createLineChart(currentView);
+            } else if (chartType === 'bar') {
+                barChartArea.style.display = 'block';
+                sidePanel.style.display = 'block';
+                dashboardGrid.classList.remove('line-chart-mode');
+                initializeBarChart();
             } else {
                 mainChartArea.style.display = 'block';
-                detailChartArea.style.display = 'none';
-                lineChartArea.style.display = 'none';
                 sidePanel.style.display = 'block';
                 dashboardGrid.classList.remove('line-chart-mode');
             }
