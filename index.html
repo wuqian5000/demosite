@@ -40,6 +40,7 @@
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative; /* Add this to allow absolute positioning of toggle buttons */
         }
 
         .dashboard-title {
@@ -64,6 +65,38 @@
 
         .nav-item:hover {
             background-color: #f3e8ff;
+        }
+
+        /* View Toggle Container */
+        #viewToggleContainer {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Toggle Button Styles */
+        .toggle-button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: none;
+            cursor: pointer;
+        }
+
+        .toggle-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .toggle-button.active {
+            background-color: #9333ea;
+            color: white;
         }
 
         /* Filters */
@@ -164,7 +197,7 @@
             max-width: 100%;
         }
 
-        .toggle-button {
+        .toggle-button-chart {
             padding: 6px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -173,7 +206,7 @@
             font-size: 0.9em;
         }
 
-        .toggle-button.active {
+        .toggle-button-chart.active {
             background: #9333ea;
             color: white;
             border-color: #9333ea;
@@ -414,6 +447,8 @@
 <body>
     <div class="header">
         <h1 class="dashboard-title">Mental Health Dashboard (Test Org)</h1>
+        <!-- View Toggle Container -->
+        <div id="viewToggleContainer"></div>
         <nav class="nav">
             <a href="#" class="nav-item">Profile (SEL / Counselor)</a>
             <a href="#" class="nav-item">Contact Us</a>
@@ -477,8 +512,8 @@
                 <div class="chart-title">Emotion Trends Over Time</div>
                 <div class="chart-controls">
                     <div style="display: flex; gap: 10px;">
-                        <button class="toggle-button active" data-view="all">All Emotions</button>
-                        <button class="toggle-button" data-view="category">By Category</button>
+                        <button class="toggle-button-chart active" data-view="all">All Emotions</button>
+                        <button class="toggle-button-chart" data-view="category">By Category</button>
                     </div>
                     <div id="chartLegend" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
                 </div>
@@ -538,6 +573,50 @@
     </div>
 
     <script>
+        // View switching functionality
+        function initializeViewToggle() {
+            const viewToggleContainer = document.getElementById('viewToggleContainer');
+            const currentView = window.location.pathname.includes('principal') ? 'principal' : 'counselor';
+
+            // Create toggle buttons
+            viewToggleContainer.innerHTML = `
+                <button 
+                    onclick="switchView('counselor')" 
+                    class="toggle-button ${currentView === 'counselor' ? 'active' : ''}">
+                    Counselor View
+                </button>
+                <button 
+                    onclick="switchView('principal')" 
+                    class="toggle-button ${currentView === 'principal' ? 'active' : ''}">
+                    Principal View
+                </button>
+            `;
+        }
+
+        function switchView(view) {
+            // Store current filters and state if needed
+            const currentFilters = {
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                chartType: document.getElementById('chartType').value,
+                organization: document.getElementById('organization').value,
+                classGroup: document.getElementById('class').value
+            };
+            localStorage.setItem('dashboardFilters', JSON.stringify(currentFilters));
+
+            // Switch to the appropriate view
+            if (view === 'principal') {
+                window.location.href = 'principal.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize the toggle buttons
+        document.addEventListener('DOMContentLoaded', initializeViewToggle);
+
+        // Existing JavaScript code for charts and functionality
+
         // Basic emotion data structure (for pie charts)
         const data = {
             positive: {
