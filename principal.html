@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>School Mental Health Dashboard</title>
+    <title>School Mental Health Dashboard - Principal View</title>
     <!-- Include Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <!-- Include your custom styles -->
@@ -25,19 +25,20 @@
             border-radius: 8px;
             margin-bottom: 20px;
             position: relative;
-            /* Add this to allow absolute positioning of toggle buttons */
         }
 
         .dashboard-title {
             color: #9333ea;
             margin: 0;
             font-size: 1.5em;
+            text-align: center;
         }
 
         .nav {
             display: flex;
             gap: 20px;
             margin-top: 10px;
+            justify-content: center;
         }
 
         .nav-item {
@@ -84,56 +85,38 @@
             color: white;
         }
 
-        /* Dashboard grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        /* Stats cards */
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
+        /* Filters */
+        .filters {
             background: white;
-            padding: 20px;
+            padding: 15px 20px;
             border-radius: 8px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .card:hover {
-            background-color: #f3e8ff;
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .card-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.5em;
-            color: #9333ea;
-        }
-
-        .card-title {
-            font-size: 1em;
+        .filter-label {
+            font-size: 0.8em;
             color: #666;
-            margin-bottom: 10px;
         }
 
-        .card-value {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .card-subtitle {
+        select,
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 0.9em;
-            color: #999;
+            width: 100%;
         }
 
         /* Chart areas */
@@ -141,6 +124,10 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
         }
 
         .chart-title {
@@ -155,78 +142,8 @@
             position: relative;
         }
 
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 1000px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .modal-title {
-            font-size: 1.5em;
-            color: #9333ea;
-            margin: 0;
-        }
-
-        .close-button {
-            font-size: 1.5em;
-            color: #999;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .close-button:hover {
-            color: #666;
-        }
-
-        /* Table styles */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9em;
-        }
-
-        .data-table th {
-            background-color: #f8f8f8;
-            color: #666;
-            font-weight: 600;
-        }
-
-        /* Button styles */
-        .button {
+        /* Export Button */
+        .export-button {
             background-color: #9333ea;
             color: white;
             padding: 8px 16px;
@@ -234,30 +151,120 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9em;
+            margin-bottom: 15px;
         }
 
-        .button:hover {
+        .export-button:hover {
             background-color: #7e22ce;
         }
 
-        .alert-button {
-            background-color: #ef4444;
+        /* Back button */
+        .back-button {
+            background: #9333ea;
             color: white;
-            padding: 6px 12px;
             border: none;
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8em;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            display: inline-block;
         }
 
-        .alert-button:hover {
-            background-color: #dc2626;
+        .back-button:hover {
+            background: #7e22ce;
+        }
+
+        /* Chart controls layout */
+        .chart-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+            align-items: center;
+            max-width: 100%;
+        }
+
+        .toggle-button-chart {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .toggle-button-chart.active {
+            background: #9333ea;
+            color: white;
+            border-color: #9333ea;
+        }
+
+        .chartLegend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 100%;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .legend-item:hover {
+            background: #f0f0f0;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .legend-item.hidden .legend-color {
+            border-bottom: 2px dashed #333;
+            background: transparent;
+        }
+
+        /* Data table */
+        .data-table {
+            width: 100%;
+            max-width: 100%;
+            table-layout: fixed;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .data-table th {
+            background: #f8f8f8;
+        }
+
+        .data-table-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
         }
 
         /* Responsive adjustments */
         @media (min-width: 768px) {
             .dashboard-grid {
-                grid-template-columns: 3fr 2fr;
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -265,7 +272,7 @@
 
 <body>
     <div class="header">
-        <h1 class="dashboard-title">School Mental Health Dashboard</h1>
+        <h1 class="dashboard-title">School Mental Health Dashboard - Principal View</h1>
         <!-- View Toggle Container -->
         <div id="viewToggleContainer"></div>
         <nav class="nav">
@@ -275,165 +282,98 @@
         </nav>
     </div>
 
-    <div class="dashboard-grid">
-        <!-- Left Column -->
-        <div>
-            <!-- Stats Cards -->
-            <div class="stats-cards">
-                <div class="card" onclick="showActiveCases()">
-                    <div class="card-icon">👥</div>
-                    <div class="card-title">Active Cases</div>
-                    <div class="card-value" id="activeCasesCount">80</div>
-                    <div class="card-subtitle">students currently receiving support</div>
-                </div>
-
-                <div class="card" onclick="showUrgentCases()">
-                    <div class="card-icon">⚠️</div>
-                    <div class="card-title">Urgent Cases</div>
-                    <div class="card-value" id="urgentCasesCount">12</div>
-                    <div class="card-subtitle">requiring immediate attention</div>
-                </div>
-
-                <div class="card" onclick="showResponseTimes()">
-                    <div class="card-icon">⏱️</div>
-                    <div class="card-title">Response Time</div>
-                    <div class="card-value" id="avgResponseTime">2.5 days</div>
-                    <div class="card-subtitle">average counselor response</div>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">🏫</div>
-                    <div class="card-title">Total Students</div>
-                    <div class="card-value" id="totalStudents">1200</div>
-                    <div class="card-subtitle">enrolled in support programs</div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="chart-area">
-                <div class="chart-title">Monthly Case Trends</div>
-                <div class="chart-wrapper">
-                    <canvas id="monthlyCasesChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-area">
-                <div class="chart-title">Issue Distribution</div>
-                <div class="chart-wrapper">
-                    <canvas id="issueDistributionChart"></canvas>
-                </div>
-            </div>
+    <!-- Filters -->
+    <div class="filters">
+        <div class="filter-group">
+            <label class="filter-label">Start Date</label>
+            <input type="date" value="2024-10-01" id="startDate">
         </div>
-
-        <!-- Right Column -->
-        <div>
-            <!-- You can add more content here if needed -->
+        <div class="filter-group">
+            <label class="filter-label">End Date</label>
+            <input type="date" value="2024-10-31" id="endDate">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Chart Type</label>
+            <select id="chartType">
+                <option value="pie" selected>Pie Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="mekko">Mekko Chart</option>
+                <option value="caseTrends">Case Trends</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Organization</label>
+            <select id="organization">
+                <option value="test">Test Org</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Class/Group</label>
+            <select id="classGroup">
+                <option value="all">All Classes</option>
+            </select>
         </div>
     </div>
 
-    <!-- Modals -->
-    <!-- Active Cases Modal -->
-    <div id="activeCasesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Active Cases Overview</h2>
-                <button class="close-button" onclick="closeModal('activeCasesModal')">&times;</button>
+    <!-- Chart Areas -->
+    <div class="chart-area" id="pieChartArea">
+        <button class="export-button" onclick="exportReport('pie')">Export Report</button>
+        <div class="chart-title">Overall Emotion Distribution</div>
+        <div class="chart-wrapper">
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Detail Pie Chart View -->
+    <div class="chart-area" id="detailPieChartArea" style="display: none;">
+        <button class="export-button" onclick="exportReport('detailPie')">Export Report</button>
+        <button class="back-button" onclick="backToMainPieChart()">← Back to Overview</button>   
+        <div class="chart-title" id="detailPieChartTitle">Detailed View</div>
+        <div class="chart-wrapper">
+            <canvas id="detailPieChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-area" id="lineChartArea" style="display: none;">
+        <button class="export-button" onclick="exportReport('line')">Export Report</button>
+        <div class="chart-title">Emotion Trends Over Time</div>
+        <div class="chart-controls">
+            <div style="display: flex; gap: 10px;">
+                <button class="toggle-button-chart active" data-view="all">All Emotions</button>
+                <button class="toggle-button-chart" data-view="category">By Category</button>
             </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Student</th>
-                        <th>Grade</th>
-                        <th>Counselor</th>
-                        <th>Last Session</th>
-                        <th>Status</th>
-                        <th>Next Session</th>
-                    </tr>
-                </thead>
-                <tbody id="activeCasesTableBody">
-                    <!-- Data will be populated by JavaScript -->
-                </tbody>
+            <div id="chartLegend" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="lineChart"></canvas>
+        </div>
+        <div class="data-table-container">
+            <table class="data-table" id="dataTable">
+                <!-- Will be populated by JavaScript -->
             </table>
         </div>
     </div>
 
-    <!-- Urgent Cases Modal -->
-    <div id="urgentCasesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Urgent Cases</h2>
-                <button class="close-button" onclick="closeModal('urgentCasesModal')">&times;</button>
-            </div>
-            <p style="color: #dc2626; font-weight: bold;">These cases require immediate attention and follow-up</p>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Student</th>
-                        <th>Grade</th>
-                        <th>Counselor</th>
-                        <th>Issue</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="urgentCasesTableBody">
-                    <!-- Data will be populated by JavaScript -->
-                </tbody>
-            </table>
+    <div class="chart-area" id="mekkoChartArea" style="display: none;">
+        <button class="export-button" onclick="exportReport('mekko')">Export Report</button>
+        <div class="chart-title">Emotion Distribution Over Time (Mekko Chart)</div>
+        <div class="chart-wrapper">
+            <canvas id="mekkoChart"></canvas>
+        </div>
+        <div class="bar-chart-legend" id="barChartLegend">
+            <!-- Legend items will be added here -->
         </div>
     </div>
 
-    <!-- Response Times Modal -->
-    <div id="responseTimesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Counselor Response Times</h2>
-                <button class="close-button" onclick="closeModal('responseTimesModal')">&times;</button>
-            </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Counselor</th>
-                        <th>Avg Response Time</th>
-                        <th>Current Case Load</th>
-                        <th>Urgent Cases</th>
-                    </tr>
-                </thead>
-                <tbody id="responseTimesTableBody">
-                    <!-- Data will be populated by JavaScript -->
-                </tbody>
-            </table>
+    <div class="chart-area" id="caseTrendsChartArea" style="display: none;">
+        <button class="export-button" onclick="exportReport('caseTrends')">Export Report</button>
+        <div class="chart-title">Monthly Case Trends</div>
+        <div class="chart-wrapper">
+            <canvas id="caseTrendsChart"></canvas>
         </div>
     </div>
 
-    <!-- Monthly Details Modal -->
-    <div id="monthlyDetailsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="monthlyDetailsTitle">Case Details</h2>
-                <button class="close-button" onclick="closeModal('monthlyDetailsModal')">&times;</button>
-            </div>
-            <button class="button" onclick="exportToExcel()">Export to Excel</button>
-            <div id="monthlyDetailsContent">
-                <!-- Data will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Issue Details Modal -->
-    <div id="issueDetailsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="issueDetailsTitle">Issue Details</h2>
-                <button class="close-button" onclick="closeModal('issueDetailsModal')">&times;</button>
-            </div>
-            <div id="issueDetailsContent">
-                <!-- Data will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript to handle charts and modals -->
+    <!-- JavaScript to handle charts -->
     <script>
         // View switching functionality
         function initializeViewToggle() {
@@ -467,488 +407,511 @@
         // Initialize the toggle buttons
         document.addEventListener('DOMContentLoaded', initializeViewToggle);
 
-        // Existing JavaScript code for charts and modals
+        // Event Handler for Chart Type Selection
+        const chartTypeSelect = document.getElementById('chartType');
+        chartTypeSelect.addEventListener('change', function (e) {
+            const chartType = e.target.value;
+            const pieChartArea = document.getElementById('pieChartArea');
+            const detailPieChartArea = document.getElementById('detailPieChartArea');
+            const lineChartArea = document.getElementById('lineChartArea');
+            const mekkoChartArea = document.getElementById('mekkoChartArea');
+            const caseTrendsChartArea = document.getElementById('caseTrendsChartArea');
 
-        // Sample data
-        const stats = {
-            totalActive: 80,
-            urgentCases: 12,
-            avgResponseTime: '2.5 days',
-            totalStudents: 1200
-        };
+            // Hide all chart areas first
+            pieChartArea.style.display = 'none';
+            detailPieChartArea.style.display = 'none';
+            lineChartArea.style.display = 'none';
+            mekkoChartArea.style.display = 'none';
+            caseTrendsChartArea.style.display = 'none';
 
-        const monthlyStats = [
-            { month: 'Jan', cases: 45, resolved: 38, ongoing: 7 },
-            { month: 'Feb', cases: 52, resolved: 43, ongoing: 9 },
-            { month: 'Mar', cases: 48, resolved: 40, ongoing: 8 }
-        ];
+            if (chartType === 'pie') {
+                pieChartArea.style.display = 'block';
+                initializeMainChart();
+            } else if (chartType === 'line') {
+                lineChartArea.style.display = 'block';
+                createLineChart(currentView);
+            } else if (chartType === 'mekko') {
+                mekkoChartArea.style.display = 'block';
+                initializeMekkoChart();
+            } else if (chartType === 'caseTrends') {
+                caseTrendsChartArea.style.display = 'block';
+                initializeCaseTrendsChart();
+            }
+        });
 
-        const issueTypes = [
-            { type: 'Anxiety', count: 25, color: 'rgb(200, 220, 240)' },
-            { type: 'Depression', count: 20, color: 'rgb(135, 175, 225)' },
-            { type: 'Stress', count: 15, color: 'rgb(70, 130, 180)' },
-            { type: 'Behavioral', count: 12, color: 'rgb(245, 200, 200)' },
-            { type: 'Other', count: 8, color: 'rgb(230, 150, 150)' }
-        ];
+        // Existing JavaScript code for charts and functionality
 
-        const activeCases = [
-            { id: 1, student: "Alice Johnson", grade: "10th", counselor: "Dr. Smith", lastSession: "2024-03-15", status: "In Progress", nextSession: "2024-03-22" },
-            { id: 2, student: "Bob Wilson", grade: "11th", counselor: "Dr. Brown", lastSession: "2024-03-14", status: "Scheduled", nextSession: "2024-03-21" }
-        ];
-
-        const urgentCases = [
-            { id: 1, student: "Charlie Davis", grade: "9th", counselor: "Dr. Smith", issue: "Severe anxiety", status: "Immediate intervention", action: "Parent conference scheduled" },
-            { id: 2, student: "Diana Miller", grade: "12th", counselor: "Dr. Brown", issue: "Crisis situation", status: "Under observation", action: "Daily check-ins" }
-        ];
-
-        const responseTimeData = [
-            { counselor: "Dr. Smith", avgResponse: "2.1 days", currentLoad: 15, urgentCases: 3 },
-            { counselor: "Dr. Brown", avgResponse: "2.8 days", currentLoad: 12, urgentCases: 2 }
-        ];
-
-        // Issue-specific student details with mock data
-        const monthlyDetails = {
-            Jan: {
-                ongoing: [
-                    { id: 1, student: "Alex Smith", grade: "9th", counselor: "Dr. Brown", startDate: "2024-01-05", lastSession: "2024-01-25", nextSession: "2024-02-01", status: "Active", notes: "Weekly sessions ongoing" },
-                    { id: 2, student: "Sarah Johnson", grade: "11th", counselor: "Dr. Smith", startDate: "2024-01-10", lastSession: "2024-01-28", nextSession: "2024-02-04", status: "Active", notes: "Bi-weekly check-ins" }
-                ],
-                resolved: [
-                    { id: 3, student: "Mike Wilson", grade: "10th", counselor: "Dr. Brown", startDate: "2024-01-03", resolvedDate: "2024-01-20", outcome: "Successfully completed therapy" },
-                    { id: 4, student: "Emma Davis", grade: "12th", counselor: "Dr. Smith", startDate: "2024-01-07", resolvedDate: "2024-01-28", outcome: "Goals achieved" }
-                ]
+        // Basic emotion data structure (for pie charts)
+        const data = {
+            positive: {
+                label: 'Positive Emotions',
+                color: '#9333ea',
+                data: {
+                    'Excited': 3,
+                    'Curious': 2,
+                    'Hopeful': 3,
+                    'N/A': 9
+                }
             },
-            Feb: {
-                ongoing: [
-                    { id: 5, student: "Chris Lee", grade: "9th", counselor: "Dr. Smith", startDate: "2024-02-01", lastSession: "2024-02-22", nextSession: "2024-03-01", status: "Active", notes: "Making good progress" }
-                ],
-                resolved: [
-                    { id: 6, student: "Lisa Park", grade: "10th", counselor: "Dr. Brown", startDate: "2024-02-05", resolvedDate: "2024-02-25", outcome: "Successfully transitioned to peer support group" }
-                ]
+            neutral: {
+                label: 'Neutral Emotions',
+                color: '#90EE90',
+                data: {
+                    'Happy': 2,
+                    'Content': 2,
+                    'Calm': 0,
+                    'N/A': 13
+                }
+            },
+            concerned: {
+                label: 'Concerned Emotions',
+                color: '#4169E1',
+                data: {
+                    'Sad': 2,
+                    'Worried': 3,
+                    'Pensive': 0,
+                    'N/A': 12
+                }
+            },
+            negative: {
+                label: 'Negative Emotions',
+                color: '#CD5C5C',
+                data: {
+                    'Angry': 1,
+                    'Annoyed': 1,
+                    'Indifferent': 2,
+                    'N/A': 13
+                }
             }
         };
 
-        const issueDetails = {
-            Anxiety: [
-                {
-                    id: 1,
-                    student: "Grace Lee",
-                    grade: "9th",
-                    counselor: "Dr. Smith",
-                    startDate: "2024-01-15",
-                    status: "Active",
-                    type: "Test Anxiety",
-                    interventions: [
-                        { date: "2024-01-15", action: "Initial assessment", notes: "Identified test-taking stress triggers" },
-                        { date: "2024-02-01", action: "Coping strategies", notes: "Introduced breathing techniques" },
-                        { date: "2024-02-15", action: "Progress review", notes: "Showing improvement in test preparation" }
-                    ]
+        // Time series data for line chart
+        const timeSeriesData = {
+            dates: ['10/01/24', '10/08/24', '10/15/24', '10/22/24', '10/29/24'],
+            emotions: {
+                positive: {
+                    excited: [1, 2, 0, 0, 0],
+                    curious: [0, 0, 1, 0, 0],
+                    hopeful: [0, 2, 1, 0, 0],
+                    color: '#9333ea'
                 },
-                {
-
-                    id: 2,
-
-                    student: "Henry Davis",
-
-                    grade: "12th",
-
-                    counselor: "Dr. Brown",
-
-                    startDate: "2024-02-01",
-
-                    status: "Active",
-
-                    type: "Social Anxiety",
-
-                    interventions: [
-
-                        { date: "2024-02-01", action: "Initial assessment", notes: "Difficulty with class presentations" },
-
-                        { date: "2024-02-15", action: "Group therapy", notes: "Participated in small group session" },
-
-                        { date: "2024-03-01", action: "Follow-up", notes: "Started using anxiety management tools" }
-
-                    ]
-
+                neutral: {
+                    happy: [1, 0, 0, 0, 2],
+                    content: [0, 1, 0, 0, 1],
+                    calm: [0, 0, 0, 0, 0],
+                    color: '#90EE90'
+                },
+                concerned: {
+                    sad: [1, 0, 0, 0, 0],
+                    worried: [0, 0, 3, 0, 0],
+                    pensive: [0, 0, 0, 0, 0],
+                    color: '#4169E1'
+                },
+                negative: {
+                    angry: [1, 0, 0, 0, 0],
+                    annoyed: [0, 0, 0, 0, 0],
+                    indifferent: [0, 1, 0, 0, 0],
+                    color: '#CD5C5C'
                 }
-
-            ],
-
-            Depression: [
-
-                {
-
-                    id: 3,
-
-                    student: "Lily Evans",
-
-                    grade: "10th",
-
-                    counselor: "Dr. Brown",
-
-                    startDate: "2024-01-20",
-
-                    status: "Active",
-
-                    type: "Major Depression",
-
-                    interventions: [
-
-                        { date: "2024-01-20", action: "Initial assessment", notes: "Persistent sadness and loss of interest" },
-
-                        { date: "2024-02-05", action: "Therapy sessions", notes: "Weekly CBT sessions initiated" },
-
-                        { date: "2024-02-20", action: "Medication referral", notes: "Referred to psychiatrist for evaluation" }
-
-                    ]
-
-                }
-
-            ],
-
-            Stress: [
-
-                {
-
-                    id: 4,
-
-                    student: "Mark Johnson",
-
-                    grade: "11th",
-
-                    counselor: "Dr. Smith",
-
-                    startDate: "2024-02-10",
-
-                    status: "Active",
-
-                    type: "Academic Stress",
-
-                    interventions: [
-
-                        { date: "2024-02-10", action: "Initial assessment", notes: "Overwhelmed by coursework" },
-
-                        { date: "2024-02-17", action: "Time management training", notes: "Provided tools and resources" },
-
-                        { date: "2024-02-24", action: "Follow-up", notes: "Improvement in task organization" }
-
-                    ]
-
-                }
-
-            ],
-
-            Behavioral: [
-
-                {
-
-                    id: 5,
-
-                    student: "Emma Watson",
-
-                    grade: "9th",
-
-                    counselor: "Dr. Brown",
-
-                    startDate: "2024-03-01",
-
-                    status: "Active",
-
-                    type: "Behavioral Issues",
-
-                    interventions: [
-
-                        { date: "2024-03-01", action: "Initial assessment", notes: "Disruptive in class" },
-
-                        { date: "2024-03-08", action: "Behavioral plan", notes: "Set clear expectations and consequences" },
-
-                        { date: "2024-03-15", action: "Parent meeting", notes: "Discussed behavior at home and school" }
-
-                    ]
-
-                }
-
-            ],
-            // ... other issues
-            Other: [
-
-                {
-
-                    id: 6,
-
-                    student: "Oliver Twist",
-
-                    grade: "12th",
-
-                    counselor: "Dr. Smith",
-
-                    startDate: "2024-03-05",
-
-                    status: "Active",
-
-                    type: "Family Issues",
-
-                    interventions: [
-
-                        { date: "2024-03-05", action: "Initial assessment", notes: "Family conflict affecting school performance" },
-
-                        { date: "2024-03-12", action: "Counseling sessions", notes: "Working on coping mechanisms" },
-
-                        { date: "2024-03-19", action: "Resource referral", notes: "Provided community resources" }
-
-                    ]
-
-                }
-
-            ]
+            }
         };
 
-        // Populate stats
-        document.getElementById('activeCasesCount').textContent = stats.totalActive;
-        document.getElementById('urgentCasesCount').textContent = stats.urgentCases;
-        document.getElementById('avgResponseTime').textContent = stats.avgResponseTime;
-        document.getElementById('totalStudents').textContent = stats.totalStudents;
+        // Emotion colors
+        const emotionColors = {
+            excited: '#9333ea',
+            happy: '#90EE90',
+            hopeful: '#6b21a8',
+            calm: '#34D399',
+            angry: '#CD5C5C',
+            sad: '#4169E1',
+            indifferent: '#B91C1C',
+            pensive: '#1D4ED8',
+            annoyed: '#EF4444',
+            curious: '#7e22ce',
+            content: '#6EE7B7',
+            worried: '#2563EB'
+        };
 
-        // Functions to show modals
-        function showActiveCases() {
-            const tbody = document.getElementById('activeCasesTableBody');
-            tbody.innerHTML = activeCases.map(case_ => `
-                <tr>
-                    <td>${case_.student}</td>
-                    <td>${case_.grade}</td>
-                    <td>${case_.counselor}</td>
-                    <td>${case_.lastSession}</td>
-                    <td>${case_.status}</td>
-                    <td>${case_.nextSession}</td>
-                </tr>
-            `).join('');
-            document.getElementById('activeCasesModal').style.display = 'block';
-        }
+        // Chart instances
+        let mainChart = null;
+        let detailChart = null;
+        let lineChart = null;
+        let mekkoChart = null;
+        let caseTrendsChart = null;
+        let currentCategory = null;
+        let currentView = 'all';
 
-        function showUrgentCases() {
-            const tbody = document.getElementById('urgentCasesTableBody');
-            tbody.innerHTML = urgentCases.map(case_ => `
-                <tr>
-                    <td>${case_.student}</td>
-                    <td>${case_.grade}</td>
-                    <td>${case_.counselor}</td>
-                    <td>${case_.issue}</td>
-                    <td>${case_.status}</td>
-                    <td>${case_.action}</td>
-                </tr>
-            `).join('');
-            document.getElementById('urgentCasesModal').style.display = 'block';
-        }
-
-        function showResponseTimes() {
-            const tbody = document.getElementById('responseTimesTableBody');
-            tbody.innerHTML = responseTimeData.map(data => `
-                <tr>
-                    <td>${data.counselor}</td>
-                    <td>${data.avgResponse}</td>
-                    <td>${data.currentLoad}</td>
-                    <td>${data.urgentCases}</td>
-                </tr>
-            `).join('');
-            document.getElementById('responseTimesModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Chart configurations
-        // Monthly Cases Chart
-        const monthlyCasesCtx = document.getElementById('monthlyCasesChart').getContext('2d');
-        const monthlyCasesChart = new Chart(monthlyCasesCtx, {
-            type: 'bar',
-            data: {
-                labels: monthlyStats.map(item => item.month),
-                datasets: [
-                    {
-                        label: 'Resolved Cases',
-                        data: monthlyStats.map(item => item.resolved),
-                        backgroundColor: '#4CAF50'
+        // Initialize main pie chart
+        function initializeMainChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            if (mainChart) mainChart.destroy();
+            mainChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.values(data).map(category => category.label),
+                    datasets: [{
+                        data: Object.values(data).map(category =>
+                            Object.values(category.data).reduce((a, b) => a + b, 0)
+                        ),
+                        backgroundColor: Object.values(data).map(category => category.color)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.raw;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
                     },
-                    {
-                        label: 'Ongoing Cases',
-                        data: monthlyStats.map(item => item.ongoing),
-                        backgroundColor: '#2196F3'
+                    onClick: function (event, elements) {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const category = Object.keys(data)[index];
+                            showDetailPieChart(category);
+                        }
                     }
-                ]
-            },
-            options: {
-                onClick: (e, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const month = monthlyStats[index].month;
-                        showMonthlyDetails(month);
-                    }
-                },
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-
-        function showMonthlyDetails(month) {
-            if (!monthlyDetails[month]) return;
-            document.getElementById('monthlyDetailsTitle').textContent = `Case Details - ${month}`;
-
-            let content = '';
-
-            if (monthlyDetails[month].ongoing.length > 0) {
-                content += `
-                    <h3>Ongoing Cases</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Grade</th>
-                                <th>Counselor</th>
-                                <th>Last Session</th>
-                                <th>Next Session</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${monthlyDetails[month].ongoing.map(case_ => `
-                                <tr>
-                                    <td>${case_.student}</td>
-                                    <td>${case_.grade}</td>
-                                    <td>${case_.counselor}</td>
-                                    <td>${case_.lastSession}</td>
-                                    <td>${case_.nextSession}</td>
-                                    <td>${case_.notes}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            }
-
-            if (monthlyDetails[month].resolved.length > 0) {
-                content += `
-                    <h3>Resolved Cases</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Grade</th>
-                                <th>Counselor</th>
-                                <th>Start Date</th>
-                                <th>Resolved Date</th>
-                                <th>Outcome</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${monthlyDetails[month].resolved.map(case_ => `
-                                <tr>
-                                    <td>${case_.student}</td>
-                                    <td>${case_.grade}</td>
-                                    <td>${case_.counselor}</td>
-                                    <td>${case_.startDate}</td>
-                                    <td>${case_.resolvedDate}</td>
-                                    <td>${case_.outcome}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            }
-
-            document.getElementById('monthlyDetailsContent').innerHTML = content;
-            document.getElementById('monthlyDetailsModal').style.display = 'block';
-        }
-
-        function exportToExcel() {
-            alert('Exporting data to Excel...');
-        }
-
-        // Issue Distribution Chart
-        const issueDistributionCtx = document.getElementById('issueDistributionChart').getContext('2d');
-        const issueDistributionChart = new Chart(issueDistributionCtx, {
-            type: 'bar',
-            data: {
-                labels: issueTypes.map(item => item.type),
-                datasets: [{
-                    label: 'Number of Cases',
-                    data: issueTypes.map(item => item.count),
-                    backgroundColor: issueTypes.map(item => item.color)
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                onClick: (e, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const issue = issueTypes[index].type;
-                        showIssueDetails(issue);
-                    }
-                },
-                responsive: true,
-                scales: {
-                    x: { beginAtZero: true }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-
-        function showIssueDetails(issue) {
-            if (!issueDetails[issue]) return;
-            document.getElementById('issueDetailsTitle').textContent = `${issue} Cases - Detailed View`;
-
-            let content = issueDetails[issue].map(student => `
-                <div class="chart-area">
-                    <h3>${student.student} - Grade ${student.grade}</h3>
-                    <p><strong>Counselor:</strong> ${student.counselor}</p>
-                    <p><strong>Start Date:</strong> ${student.startDate}</p>
-                    <p><strong>Status:</strong> ${student.status}</p>
-                    <h4>Intervention History:</h4>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Action</th>
-                                <th>Notes</th>
-                                <th>Alert</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${student.interventions.map(intervention => `
-                                <tr>
-                                    <td>${intervention.date}</td>
-                                    <td>${intervention.action}</td>
-                                    <td>${intervention.notes}</td>
-                                    <td><button class="alert-button" onclick="raiseAlert('${student.counselor}', '${student.student}')">Raise Alert</button></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `).join('');
-
-            document.getElementById('issueDetailsContent').innerHTML = content;
-            document.getElementById('issueDetailsModal').style.display = 'block';
-        }
-
-        function raiseAlert(counselor, student) {
-            alert(`Alert raised to ${counselor} regarding ${student}.`);
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function (event) {
-            const modals = ['activeCasesModal', 'urgentCasesModal', 'responseTimesModal', 'monthlyDetailsModal', 'issueDetailsModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target == modal) {
-                    modal.style.display = "none";
                 }
             });
         }
+
+        // Show detailed pie chart
+        function showDetailPieChart(category) {
+            const pieChartArea = document.getElementById('pieChartArea');
+            const detailPieChartArea = document.getElementById('detailPieChartArea');
+            const detailPieChartTitle = document.getElementById('detailPieChartTitle');
+
+            pieChartArea.style.display = 'none';
+            detailPieChartArea.style.display = 'block';
+            currentCategory = category;
+
+            const categoryData = data[category];
+            detailPieChartTitle.textContent = `Detailed View - ${categoryData.label}`;
+
+            if (detailChart) detailChart.destroy();
+
+            detailChart = new Chart(document.getElementById('detailPieChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(categoryData.data),
+                    datasets: [{
+                        data: Object.values(categoryData.data),
+                        backgroundColor: [
+                            categoryData.color,
+                            shadeColor(categoryData.color, 20),
+                            shadeColor(categoryData.color, 40),
+                            '#f0f0f0'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.raw;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Back to main pie chart
+        function backToMainPieChart() {
+            document.getElementById('detailPieChartArea').style.display = 'none';
+            document.getElementById('pieChartArea').style.display = 'block';
+            currentCategory = null;
+        }
+
+        // Initialize Line Chart
+        function createLineChart(view = 'all') {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            if (lineChart) lineChart.destroy();
+
+            let datasets = [];
+
+            if (view === 'all') {
+                // Show all individual emotions
+                Object.entries(timeSeriesData.emotions).forEach(([category, categoryData]) => {
+                    Object.entries(categoryData).forEach(([emotion, values]) => {
+                        if (emotion !== 'color') {
+                            datasets.push({
+                                label: capitalizeFirstLetter(emotion),
+                                data: values,
+                                borderColor: emotionColors[emotion],
+                                backgroundColor: emotionColors[emotion],
+                                tension: 0.4,
+                                borderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            });
+                        }
+                    });
+                });
+            } else {
+                // Show category totals
+                Object.entries(timeSeriesData.emotions).forEach(([category, categoryData]) => {
+                    const categoryTotals = timeSeriesData.dates.map((_, index) => {
+                        return Object.entries(categoryData).reduce((sum, [emotion, values]) => {
+                            return emotion !== 'color' ? sum + (Array.isArray(values) ? values[index] : 0) : sum;
+                        }, 0);
+                    });
+
+                    datasets.push({
+                        label: capitalizeFirstLetter(category),
+                        data: categoryTotals,
+                        borderColor: categoryData.color,
+                        backgroundColor: categoryData.color,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    });
+                });
+            }
+
+            lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeSeriesData.dates,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true
+                        },
+                        title: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: '#e0e0e0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: true,
+                                color: '#e0e0e0'
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                autoSkip: true,
+                                maxTicksLimit: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateDataTable(datasets);
+            updateLegend(datasets);
+        }
+
+        // Update Data Table and Legend
+        function updateDataTable(datasets) {
+            const table = document.getElementById('dataTable');
+            let html = '<tr><th>Date</th>';
+
+            datasets.forEach(dataset => {
+                html += `<th style="color: ${dataset.borderColor}">${dataset.label}</th>`;
+            });
+            html += '</tr>';
+
+            timeSeriesData.dates.forEach((date, index) => {
+                html += `<tr><td>${date}</td>`;
+                datasets.forEach(dataset => {
+                    html += `<td>${dataset.data[index]}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            table.innerHTML = html;
+        }
+
+        function updateLegend(datasets) {
+            const legend = document.getElementById('chartLegend');
+            legend.innerHTML = datasets.map(dataset => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${dataset.borderColor}"></div>
+                    ${dataset.label}
+                </div>
+            `).join('');
+        }
+
+        // Add event listeners for line chart toggle buttons
+        document.querySelectorAll('.toggle-button-chart').forEach(button => {
+            button.addEventListener('click', function (e) {
+                document.querySelectorAll('.toggle-button-chart').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentView = e.target.dataset.view;
+                createLineChart(currentView);
+            });
+        });
+
+        // Initialize Mekko Chart
+        function initializeMekkoChart() {
+            const ctx = document.getElementById('mekkoChart').getContext('2d');
+            if (mekkoChart) mekkoChart.destroy();
+
+            const mekkoData = [
+                { date: '10/01/24', positive: 4, neutral: 2, concerned: 2, negative: 2 },
+                { date: '10/08/24', positive: 4, neutral: 1, concerned: 0, negative: 1 },
+                { date: '10/15/24', positive: 1, neutral: 0, concerned: 3, negative: 0 },
+                { date: '10/29/24', positive: 0, neutral: 3, concerned: 0, negative: 0 }
+            ];
+
+            const labels = mekkoData.map(item => item.date);
+            const datasets = [];
+            const categories = ['positive', 'neutral', 'concerned', 'negative'];
+            const colors = ['#9333ea', '#90EE90', '#4169E1', '#CD5C5C'];
+
+            categories.forEach((category, index) => {
+                datasets.push({
+                    label: capitalizeFirstLetter(category),
+                    data: mekkoData.map(item => item[category]),
+                    backgroundColor: colors[index],
+                    stack: 'Stack 0'
+                });
+            });
+
+            mekkoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Initialize Case Trends Chart
+        function initializeCaseTrendsChart() {
+            const ctx = document.getElementById('caseTrendsChart').getContext('2d');
+            if (caseTrendsChart) caseTrendsChart.destroy();
+
+            const monthlyStats = [
+                { month: 'Jan', resolved: 38, ongoing: 7 },
+                { month: 'Feb', resolved: 43, ongoing: 9 },
+                { month: 'Mar', resolved: 40, ongoing: 8 }
+            ];
+
+            caseTrendsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthlyStats.map(item => item.month),
+                    datasets: [
+                        {
+                            label: 'Resolved Cases',
+                            data: monthlyStats.map(item => item.resolved),
+                            backgroundColor: '#4CAF50'
+                        },
+                        {
+                            label: 'Ongoing Cases',
+                            data: monthlyStats.map(item => item.ongoing),
+                            backgroundColor: '#2196F3'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Export Report Function
+        function exportReport(chartType) {
+            alert(`Exporting ${chartType} report...`);
+            // Implement actual export logic here
+        }
+
+        // Helper functions
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function shadeColor(color, percent) {
+            let R = parseInt(color.substring(1, 3), 16);
+            let G = parseInt(color.substring(3, 5), 16);
+            let B = parseInt(color.substring(5, 7), 16);
+
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+
+            R = (R < 255) ? R : 255;
+            G = (G < 255) ? G : 255;
+            B = (B < 255) ? B : 255;
+
+            const RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+            const GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+            const BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+            return "#" + RR + GG + BB;
+        }
+
+        // Initialize default chart
+        initializeMainChart();
     </script>
 </body>
 
